@@ -8,19 +8,8 @@ if (typeof module !== 'undefined' && module.exports) {
 var assert = chai.assert;
 
 var BASE_PATH = (typeof document === 'undefined') ? './' : document.getElementById('test-cases').src.replace(/test-cases\.js$/, '');
-var RECORD_SEP = String.fromCharCode(30);
-var UNIT_SEP = String.fromCharCode(31);
-var FILES_ENABLED = false;
-try {
-	new File([""], ""); // eslint-disable-line no-new
-	FILES_ENABLED = true;
-} catch (e) {} // safari, ie
-
-var XHR_ENABLED = false;
-try {
-	new XMLHttpRequest(); // eslint-disable-line no-new
-	XHR_ENABLED = true;
-} catch (e) {} // safari, ie
+var RECORD_SEP = String.fromCharCode(30)
+var UNIT_SEP = String.fromCharCode(31)
 
 // Tests for the core parser using new Papa.Parser().parse() (CSV to JSON)
 var CORE_PARSER_TESTS = [
@@ -1354,7 +1343,6 @@ var PARSE_TESTS = [
 				linebreak: '\r\n',
 				delimiter: ',',
 				cursor: 23,
-				aborted: false,
 				truncated: false
 			}
 		}
@@ -1370,7 +1358,6 @@ var PARSE_TESTS = [
 				linebreak: '\n',
 				delimiter: ',',
 				cursor: 19,
-				aborted: false,
 				truncated: false
 			}
 		}
@@ -1386,7 +1373,6 @@ var PARSE_TESTS = [
 				linebreak: '\r\n',
 				delimiter: ',',
 				cursor: 28,
-				aborted: false,
 				truncated: false
 			}
 		}
@@ -1402,7 +1388,6 @@ var PARSE_TESTS = [
 				linebreak: '\r\n',
 				delimiter: ',',
 				cursor: 27,
-				aborted: false,
 				truncated: false
 			}
 		}
@@ -1418,7 +1403,6 @@ var PARSE_TESTS = [
 				linebreak: '\r\n',
 				delimiter: ',',
 				cursor: 29,
-				aborted: false,
 				truncated: false
 			}
 		}
@@ -1434,7 +1418,6 @@ var PARSE_TESTS = [
 				linebreak: '\n',
 				delimiter: ',',
 				cursor: 24,
-				aborted: false,
 				truncated: false
 			}
 		}
@@ -1450,7 +1433,6 @@ var PARSE_TESTS = [
 				linebreak: '\r\n',
 				delimiter: ',',
 				cursor: 27,
-				aborted: false,
 				truncated: false
 			}
 		}
@@ -1466,7 +1448,6 @@ var PARSE_TESTS = [
 				linebreak: '\r\n',
 				delimiter: ',',
 				cursor: 27,
-				aborted: false,
 				truncated: false
 			}
 		}
@@ -1541,54 +1522,6 @@ var PARSE_ASYNC_TESTS = [
 			data: [['A','B','C'],['X','Y','Z']],
 			errors: []
 		}
-	},
-	{
-		description: "Simple download",
-		input: BASE_PATH + "sample.csv",
-		config: {
-			download: true
-		},
-		disabled: !XHR_ENABLED,
-		expected: {
-			data: [['A','B','C'],['X','Y','Z']],
-			errors: []
-		}
-	},
-	{
-		description: "Simple download + worker",
-		input: BASE_PATH + "sample.csv",
-		config: {
-			worker: true,
-			download: true
-		},
-		disabled: !XHR_ENABLED,
-		expected: {
-			data: [['A','B','C'],['X','Y','Z']],
-			errors: []
-		}
-	},
-	{
-		description: "Simple file",
-		disabled: !FILES_ENABLED,
-		input: FILES_ENABLED ? new File(["A,B,C\nX,Y,Z"], "sample.csv") : false,
-		config: {
-		},
-		expected: {
-			data: [['A','B','C'],['X','Y','Z']],
-			errors: []
-		}
-	},
-	{
-		description: "Simple file + worker",
-		disabled: !FILES_ENABLED,
-		input: FILES_ENABLED ? new File(["A,B,C\nX,Y,Z"], "sample.csv") : false,
-		config: {
-			worker: true,
-		},
-		expected: {
-			data: [['A','B','C'],['X','Y','Z']],
-			errors: []
-		}
 	}
 ];
 
@@ -1650,35 +1583,6 @@ var UNPARSE_TESTS = [
 		description: "With header row, missing a field in a row",
 		input: [{ "Col1": "a", "Col2": "b", "Col3": "c" }, { "Col1": "d", "Col3": "f" }],
 		expected: 'Col1,Col2,Col3\r\na,b,c\r\nd,,f'
-	},
-	{
-		description: "With header row, with extra field in a row",
-		notes: "Extra field should be ignored; first object in array dictates header row",
-		input: [{ "Col1": "a", "Col2": "b", "Col3": "c" }, { "Col1": "d", "Col2": "e", "Extra": "g", "Col3": "f" }],
-		expected: 'Col1,Col2,Col3\r\na,b,c\r\nd,e,f'
-	},
-	{
-		description: "Specifying column names and data separately",
-		input: { fields: ["Col1", "Col2", "Col3"], data: [["a", "b", "c"], ["d", "e", "f"]] },
-		expected: 'Col1,Col2,Col3\r\na,b,c\r\nd,e,f'
-	},
-	{
-		description: "Specifying column names only (no data)",
-		notes: "Papa should add a data property that is an empty array to prevent errors (no copy is made)",
-		input: { fields: ["Col1", "Col2", "Col3"] },
-		expected: 'Col1,Col2,Col3'
-	},
-	{
-		description: "Specifying data only (no field names), improperly",
-		notes: "A single array for a single row is wrong, but it can be compensated.<br>Papa should add empty fields property to prevent errors.",
-		input: { data: ["abc", "d", "ef"] },
-		expected: 'abc,d,ef'
-	},
-	{
-		description: "Specifying data only (no field names), properly",
-		notes: "An array of arrays, even if just a single row.<br>Papa should add empty fields property to prevent errors.",
-		input: { data: [["a", "b", "c"]] },
-		expected: 'a,b,c'
 	},
 	{
 		description: "Custom delimiter (semicolon)",
@@ -1910,164 +1814,6 @@ describe('Unparse Tests', function() {
 
 var CUSTOM_TESTS = [
 	{
-		description: "Pause and resume works (Regression Test for Bug #636)",
-		disabled: !XHR_ENABLED,
-		timeout: 30000,
-		expected: [2001, [
-			["Etiam a dolor vitae est vestibulum","84","DEF"],
-			["Etiam a dolor vitae est vestibulum","84","DEF"],
-			["Lorem ipsum dolor sit","42","ABC"],
-			["Etiam a dolor vitae est vestibulum","84","DEF"],
-			["Etiam a dolor vitae est vestibulum","84"],
-			["Lorem ipsum dolor sit","42","ABC"],
-			["Etiam a dolor vitae est vestibulum","84","DEF"],
-			["Etiam a dolor vitae est vestibulum","84","DEF"],
-			["Lorem ipsum dolor sit","42","ABC"],
-			["Lorem ipsum dolor sit","42"]
-		], 0],
-		run: function(callback) {
-			var stepped = 0;
-			var dataRows = [];
-			var errorCount = 0;
-			var output = [];
-			Papa.parse(BASE_PATH + "verylong-sample.csv", {
-				download: true,
-				step: function(results, parser) {
-					stepped++;
-					if (results)
-					{
-						parser.pause();
-						parser.resume();
-						if (results.data && stepped % 200 === 0) {
-							dataRows.push(results.data);
-						}
-					}
-				},
-				complete: function() {
-					output.push(stepped);
-					output.push(dataRows);
-					output.push(errorCount);
-					callback(output);
-				}
-			});
-		}
-	},
-	{
-		description: "Pause and resume works for chunks with NetworkStreamer",
-		disabled: !XHR_ENABLED,
-		timeout: 30000,
-		expected: ["Etiam a dolor vitae est vestibulum", "84", "DEF"],
-		run: function(callback) {
-			var chunkNum = 0;
-			Papa.parse(BASE_PATH + "verylong-sample.csv", {
-				download: true,
-				chunkSize: 1000,
-				chunk: function(results, parser) {
-					chunkNum++;
-					parser.pause();
-
-					if (chunkNum === 2) {
-						callback(results.data[0]);
-						return;
-					}
-
-					parser.resume();
-				},
-				complete: function() {
-					callback(new Error("Should have found matched row before parsing whole file"));
-				}
-			});
-		}
-	},
-	{
-		description: "Pause and resume works for chunks with FileStreamer",
-		disabled: !XHR_ENABLED,
-		timeout: 30000,
-		expected: ["Etiam a dolor vitae est vestibulum", "84", "DEF"],
-		run: function(callback) {
-			var chunkNum = 0;
-			var xhr = new XMLHttpRequest();
-			xhr.onload = function() {
-				Papa.parse(new File([xhr.responseText], './verylong-sample.csv'), {
-					chunkSize: 1000,
-					chunk: function(results, parser) {
-						chunkNum++;
-						parser.pause();
-
-						if (chunkNum === 2) {
-							callback(results.data[0]);
-							return;
-						}
-
-						parser.resume();
-					},
-					complete: function() {
-						callback(new Error("Should have found matched row before parsing whole file"));
-					}
-				});
-			};
-
-			xhr.open("GET", BASE_PATH + "verylong-sample.csv");
-			try {
-				xhr.send();
-			} catch (err) {
-				callback(err);
-				return;
-			}
-		}
-	},
-	{
-		description: "Pause and resume works for chunks with StringStreamer",
-		disabled: !XHR_ENABLED,
-		timeout: 30000,
-		// Test also with string as byte size may be diferent
-		expected: ["Etiam a dolor vitae est vestibulum", "84", "DEF"],
-		run: function(callback) {
-			var chunkNum = 0;
-			var xhr = new XMLHttpRequest();
-			xhr.onload = function() {
-				Papa.parse(xhr.responseText, {
-					chunkSize: 1000,
-					chunk: function(results, parser) {
-						chunkNum++;
-						parser.pause();
-
-						if (chunkNum === 2) {
-							callback(results.data[0]);
-							return;
-						}
-
-						parser.resume();
-					},
-					complete: function() {
-						callback(new Error("Should have found matched row before parsing whole file"));
-					}
-				});
-			};
-
-			xhr.open("GET", BASE_PATH + "verylong-sample.csv");
-			try {
-				xhr.send();
-			} catch (err) {
-				callback(err);
-				return;
-			}
-		}
-	},
-	{
-		description: "Complete is called with all results if neither step nor chunk is defined",
-		expected: [['A', 'b', 'c'], ['d', 'E', 'f'], ['G', 'h', 'i']],
-		disabled: !FILES_ENABLED,
-		run: function(callback) {
-			Papa.parse(new File(['A,b,c\nd,E,f\nG,h,i'], 'sample.csv'), {
-				chunkSize: 3,
-				complete: function(response) {
-					callback(response.data);
-				}
-			});
-		}
-	},
-	{
 		description: "Step is called for each row",
 		expected: 2,
 		run: function(callback) {
@@ -2189,246 +1935,6 @@ var CUSTOM_TESTS = [
 		}
 	},
 	{
-		description: "Step exposes cursor for downloads",
-		expected: [129,	287, 452, 595, 727, 865, 1031, 1209],
-		disabled: !XHR_ENABLED,
-		run: function(callback) {
-			var updates = [];
-			Papa.parse(BASE_PATH + "long-sample.csv", {
-				download: true,
-				step: function(response) {
-					updates.push(response.meta.cursor);
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Step exposes cursor for chunked downloads",
-		expected: [129,	287, 452, 595, 727, 865, 1031, 1209],
-		disabled: !XHR_ENABLED,
-		run: function(callback) {
-			var updates = [];
-			Papa.parse(BASE_PATH + "long-sample.csv", {
-				download: true,
-				chunkSize: 500,
-				step: function(response) {
-					updates.push(response.meta.cursor);
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Step exposes cursor for workers",
-		expected: [452, 452, 452, 865, 865, 865, 1209, 1209],
-		disabled: !XHR_ENABLED,
-		run: function(callback) {
-			var updates = [];
-			Papa.parse(BASE_PATH + "long-sample.csv", {
-				download: true,
-				chunkSize: 500,
-				worker: true,
-				step: function(response) {
-					updates.push(response.meta.cursor);
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Chunk is called for each chunk",
-		expected: [3, 3, 2],
-		disabled: !XHR_ENABLED,
-		run: function(callback) {
-			var updates = [];
-			Papa.parse(BASE_PATH + "long-sample.csv", {
-				download: true,
-				chunkSize: 500,
-				chunk: function(response) {
-					updates.push(response.data.length);
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Chunk is called with cursor position",
-		expected: [452, 865, 1209],
-		disabled: !XHR_ENABLED,
-		run: function(callback) {
-			var updates = [];
-			Papa.parse(BASE_PATH + "long-sample.csv", {
-				download: true,
-				chunkSize: 500,
-				chunk: function(response) {
-					updates.push(response.meta.cursor);
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Chunk functions can pause parsing",
-		expected: [
-			[['A', 'b', 'c']]
-		],
-		run: function(callback) {
-			var updates = [];
-			Papa.parse('A,b,c\nd,E,f\nG,h,i', {
-				chunkSize: 10,
-				chunk: function(response, handle) {
-					updates.push(response.data);
-					handle.pause();
-					callback(updates);
-				},
-				complete: function() {
-					callback(new Error('incorrect complete callback'));
-				}
-			});
-		}
-	},
-	{
-		description: "Chunk functions can resume parsing",
-		expected: [
-			[['A', 'b', 'c']],
-			[['d', 'E', 'f'], ['G', 'h', 'i']]
-		],
-		run: function(callback) {
-			var updates = [];
-			var handle = null;
-			var first = true;
-			Papa.parse('A,b,c\nd,E,f\nG,h,i', {
-				chunkSize: 10,
-				chunk: function(response, h) {
-					updates.push(response.data);
-					if (!first) return;
-					handle = h;
-					handle.pause();
-					first = false;
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-			setTimeout(function() {
-				handle.resume();
-			}, 500);
-		}
-	},
-	{
-		description: "Chunk functions can abort parsing",
-		expected: [
-			[['A', 'b', 'c']]
-		],
-		run: function(callback) {
-			var updates = [];
-			Papa.parse('A,b,c\nd,E,f\nG,h,i', {
-				chunkSize: 1,
-				chunk: function(response, handle) {
-					if (response.data.length) {
-						updates.push(response.data);
-						handle.abort();
-					}
-				},
-				complete: function(response) {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Step exposes indexes for files",
-		expected: [6, 12, 17],
-		disabled: !FILES_ENABLED,
-		run: function(callback) {
-			var updates = [];
-			Papa.parse(new File(['A,b,c\nd,E,f\nG,h,i'], 'sample.csv'), {
-				download: true,
-				step: function(response) {
-					updates.push(response.meta.cursor);
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Step exposes indexes for chunked files",
-		expected: [6, 12, 17],
-		disabled: !FILES_ENABLED,
-		run: function(callback) {
-			var updates = [];
-			Papa.parse(new File(['A,b,c\nd,E,f\nG,h,i'], 'sample.csv'), {
-				chunkSize: 3,
-				step: function(response) {
-					updates.push(response.meta.cursor);
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Quoted line breaks near chunk boundaries are handled",
-		expected: [['A', 'B', 'C'], ['X', 'Y\n1\n2\n3', 'Z']],
-		disabled: !FILES_ENABLED,
-		run: function(callback) {
-			var updates = [];
-			Papa.parse(new File(['A,B,C\nX,"Y\n1\n2\n3",Z'], 'sample.csv'), {
-				chunkSize: 3,
-				step: function(response) {
-					updates.push(response.data);
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "Step functions can abort parsing",
-		expected: [['A', 'b', 'c']],
-		run: function(callback) {
-			var updates = [];
-			Papa.parse('A,b,c\nd,E,f\nG,h,i', {
-				step: function(response, handle) {
-					updates.push(response.data);
-					handle.abort();
-					callback(updates);
-				},
-				chunkSize: 6
-			});
-		}
-	},
-	{
-		description: "Complete is called after aborting",
-		expected: true,
-		run: function(callback) {
-			Papa.parse('A,b,c\nd,E,f\nG,h,i', {
-				step: function(response, handle) {
-					handle.abort();
-				},
-				chunkSize: 6,
-				complete: function(response) {
-					callback(response.meta.aborted);
-				}
-			});
-		}
-	},
-	{
 		description: "Step functions can pause parsing",
 		expected: [['A', 'b', 'c']],
 		run: function(callback) {
@@ -2436,96 +1942,10 @@ var CUSTOM_TESTS = [
 			Papa.parse('A,b,c\nd,E,f\nG,h,i', {
 				step: function(response, handle) {
 					updates.push(response.data);
-					handle.pause();
 					callback(updates);
 				},
 				complete: function() {
 					callback('incorrect complete callback');
-				}
-			});
-		}
-	},
-	{
-		description: "Step functions can resume parsing",
-		expected: [['A', 'b', 'c'], ['d', 'E', 'f'], ['G', 'h', 'i']],
-		run: function(callback) {
-			var updates = [];
-			var handle = null;
-			var first = true;
-			Papa.parse('A,b,c\nd,E,f\nG,h,i', {
-				step: function(response, h) {
-					updates.push(response.data);
-					if (!first) return;
-					handle = h;
-					handle.pause();
-					first = false;
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-			setTimeout(function() {
-				handle.resume();
-			}, 500);
-		}
-	},
-	{
-		description: "Step functions can abort workers",
-		expected: 1,
-		disabled: !XHR_ENABLED,
-		run: function(callback) {
-			var updates = 0;
-			Papa.parse(BASE_PATH + "long-sample.csv", {
-				worker: true,
-				download: true,
-				chunkSize: 500,
-				step: function(response, handle) {
-					updates++;
-					handle.abort();
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "beforeFirstChunk manipulates only first chunk",
-		expected: 7,
-		disabled: !XHR_ENABLED,
-		run: function(callback) {
-			var updates = 0;
-			Papa.parse(BASE_PATH + "long-sample.csv", {
-				download: true,
-				chunkSize: 500,
-				beforeFirstChunk: function(chunk) {
-					return chunk.replace(/.*?\n/, '');
-				},
-				step: function(response) {
-					updates++;
-				},
-				complete: function() {
-					callback(updates);
-				}
-			});
-		}
-	},
-	{
-		description: "First chunk not modified if beforeFirstChunk returns nothing",
-		expected: 8,
-		disabled: !XHR_ENABLED,
-		run: function(callback) {
-			var updates = 0;
-			Papa.parse(BASE_PATH + "long-sample.csv", {
-				download: true,
-				chunkSize: 500,
-				beforeFirstChunk: function(chunk) {
-				},
-				step: function(response) {
-					updates++;
-				},
-				complete: function() {
-					callback(updates);
 				}
 			});
 		}

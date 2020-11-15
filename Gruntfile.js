@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 	grunt.initConfig({
 		uglify: {
 			options: {
@@ -18,10 +18,10 @@ module.exports = function(grunt) {
 				},
 			},
 		},
-	});
+	})
 
-	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-uglify')
 
-	grunt.registerTask('build', ['uglify']);
-	grunt.registerTask('default', ['uglify']);
-};
+	grunt.registerTask('build', ['uglify'])
+	grunt.registerTask('default', ['uglify'])
+}

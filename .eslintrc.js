@@ -1,6 +1,7 @@
 module.exports = {
 	"parserOptions": {
-		"ecmaVersion": 5
+		"ecmaVersion": 7,
+		"sourceType": "module"
 	},
 	"env": {
 		"browser": true,
@@ -233,19 +234,14 @@ module.exports = {
 		"require-await": "error",
 		"require-jsdoc": "off",
 		"rest-spread-spacing": "error",
-		"semi": "error",
-		"semi-spacing": "error",
-		"semi-style": [
-			"error",
-			"last"
-		],
+		"semi": ["error", "never"],
 		"sort-imports": "error",
 		"sort-keys": "off",
 		"sort-vars": "off",
 		"space-before-blocks": "error",
 		"space-before-function-paren": [
 			"error",
-			"never"
+			"always"
 		],
 		"space-in-parens": [
 			"error",
@@ -276,4 +272,4 @@ module.exports = {
 		"yield-star-spacing": "error",
 		"yoda": "off"
 	}
-};
+}
